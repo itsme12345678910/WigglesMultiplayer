@@ -31,6 +31,7 @@ if {[in_class_def]} {
 
 	def_event evt_btn_on
     handle_event evt_btn_on {
+		generate_mp_command "evt_btn_on" this "-num1" "-text1" "-text2"
 		if {$current_itemtype != 0  &&  $current_worker != 0} {
 			if {![obj_valid $current_worker]} {
 				log "WARNING: genericprod.tcl : current_worker is != 0 but object invalid!"
@@ -50,7 +51,6 @@ if {[in_class_def]} {
 			free_unneeded_items
 		}
 	}
-
 
 	// Event: Gegenstand aus der nahen Umgebung als Material in die PS aufnehmen
 
@@ -811,5 +811,26 @@ if {[in_class_def]} {
 		}
 		set buildinprogress [expr $buildup_step > $max_buildup_step]
 		set_buildupstate this $buildinprogress
+	}
+	
+	proc generate_mp_command {type objjj args} {
+		#Send Multiplayer Data
+		set destSocket $::env(SERVER_SOCKET)
+		set message "set_event "
+		append message [event_get $objjj -origin]
+		append message " "
+		append message $type
+		append message " -target "
+		append message [event_get $objjj -origin]
+		foreach va $args {
+			append message " "
+			append message $va
+			append message " {"
+			append message [event_get $objjj $va]
+			append message "}"
+		}
+		puts $destSocket $message
+		flush $destSocket
+		update
 	}
 }
