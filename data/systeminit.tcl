@@ -103,6 +103,9 @@ if { [file exists data/userstartup.tcl] } {
    	gui_new_game
 }
 
+
+call ./data/setupmpconnection.tcl
+
 show_loading no
 gametime start
 load_done
