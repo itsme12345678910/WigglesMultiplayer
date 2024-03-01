@@ -27,9 +27,6 @@ proc incoming {sock addr port} {
 	
 proc Echo {sock} {       
 		if {[eof $sock] || [catch {gets $sock line}]} {
-		close $sock
-		print "Close $echo(addr,$sock)"
-		unset echo(addr,$sock)
 		} else {
 		print $line
 		set rv [eval $line]
