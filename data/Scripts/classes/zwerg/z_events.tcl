@@ -25,6 +25,7 @@ if {[in_class_def]} {
 	def_event evt_task_dropall
 	def_event evt_task_buildup
 	def_event evt_task_walk
+	def_event mp_evt_task_walk
 	def_event evt_task_harvest
 	def_event evt_task_mine
 	def_event evt_task_dig
@@ -83,6 +84,9 @@ if {[in_class_def]} {
 		evt_task_walk_proc
 	}
 
+	handle_event mp_evt_task_walk {
+		mp_evt_task_walk_proc
+	}
 
 	handle_event evt_task_guard {
 		evt_task_guard_proc
@@ -348,6 +352,11 @@ if {[in_class_def]} {
 	proc evt_task_walk_proc {} {
 	
 		generate_mp_command "evt_task_walk" this "-pos1"
+		
+		mp_evt_task_walk_proc
+	}
+	
+	proc mp_evt_task_walk_proc {} {
 		
 		global event_log current_plan
 		global last_event event_repeat last_userevent_time
@@ -1531,7 +1540,7 @@ if {[in_class_def]} {
 		set destSocket $::env(SERVER_SOCKET)
 		set message "set_event "
 		append message [event_get $objjj -origin]
-		append message " "
+		append message " mp_"
 		append message $type
 		append message " -target "
 		append message [event_get $objjj -origin]
