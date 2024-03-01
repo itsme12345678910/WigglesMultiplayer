@@ -20,13 +20,11 @@ if {[in_class_def]} {
 	def_event evt_task_prodattack
 	def_event evt_task_workprod_prefer
 	def_event evt_task_pickup
-	def_event mp_evt_task_pickup
 	def_event evt_task_convert
 	def_event evt_task_putdown
 	def_event evt_task_dropall
 	def_event evt_task_buildup
 	def_event evt_task_walk
-	def_event mp_evt_task_walk
 	def_event evt_task_harvest
 	def_event evt_task_mine
 	def_event evt_task_dig
@@ -34,10 +32,8 @@ if {[in_class_def]} {
 	def_event evt_task_attack
 	def_event evt_task_defend
 	def_event evt_task_open_box
-	def_event mp_evt_task_open_box
 	def_event evt_task_switch
 	def_event evt_task_useitem
-	def_event mp_evt_task_useitem
 	def_event evt_task_snapitem
 	def_event evt_task_objaction
 	def_event evt_task_kidnap
@@ -87,9 +83,6 @@ if {[in_class_def]} {
 		evt_task_walk_proc
 	}
 
-	handle_event mp_evt_task_walk {
-		mp_evt_task_walk_proc
-	}
 
 	handle_event evt_task_guard {
 		evt_task_guard_proc
@@ -134,10 +127,6 @@ if {[in_class_def]} {
 	handle_event evt_task_pickup {
 		evt_task_pickup_proc
 	}
-	
-	handle_event mp_evt_task_pickup {
-		mp_evt_task_pickup_proc
-	}
 
 	handle_event evt_task_convert {
 		evt_task_convert_proc
@@ -145,10 +134,6 @@ if {[in_class_def]} {
 
 	handle_event evt_task_useitem {
 		evt_task_useitem_proc
-	}
-
-	handle_event mp_evt_task_useitem {
-		mp_evt_task_useitem_proc
 	}
 
 	handle_event evt_task_objaction {
@@ -171,9 +156,6 @@ if {[in_class_def]} {
 		evt_task_open_box_proc
 	}
 
-	handle_event  mp_evt_task_open_box {
-		mp_evt_task_open_box_proc
-	}
 
 	handle_event evt_task_putdown {
 		evt_task_putdown_proc
@@ -367,11 +349,6 @@ if {[in_class_def]} {
 	
 		generate_mp_command "evt_task_walk" this "-pos1"
 		
-		mp_evt_task_walk_proc
-	}
-	
-	proc mp_evt_task_walk_proc {} {
-		
 		global event_log current_plan
 		global last_event event_repeat last_userevent_time
 
@@ -444,11 +421,6 @@ if {[in_class_def]} {
 	proc evt_task_pickup_proc {} {
 	
 		generate_mp_command "evt_task_pickup" this "-subject1" "-pos1"
-	
-		mp_evt_task_pickup_proc
-	}
-	
-	proc mp_evt_task_pickup_proc {} {
 	
 		global current_plan
 		global last_event last_userevent_time event_repeat
@@ -558,11 +530,6 @@ if {[in_class_def]} {
 	proc evt_task_useitem_proc {} {
 	
 		generate_mp_command "evt_task_useitem" this "-subject1" "-pos1"
-	
-		mp_evt_task_useitem_proc
-	}
-
-	proc mp_evt_task_useitem_proc {} {
 	
 		global event_log
 		global last_event event_repeat last_userevent_time
@@ -757,12 +724,6 @@ if {[in_class_def]} {
 	
 		generate_mp_command "evt_task_open_box" this "-subject1" "-pos1"
 	
-		mp_evt_task_open_box_proc
-	}
-
-
-	proc mp_evt_task_open_box_proc {} {
-	
 		global event_log current_plan
 		global last_event event_repeat last_userevent_time
 
@@ -790,6 +751,7 @@ if {[in_class_def]} {
 		set_objworkicons this Axt [get_objclass $evtitem]
 		prod_gnome_state this walk [get_pos $evtitem]
 	}
+
 
 
 	// Ablegen von Gegenständen : von User ausgelöst
@@ -1566,10 +1528,11 @@ if {[in_class_def]} {
 
 	proc generate_mp_command {type objjj args} {
 		#Send Multiplayer Data
+		if {[event_get $objjj -num3] != 999} {
 		set destSocket $::env(SERVER_SOCKET)
 		set message "set_event "
 		append message [event_get $objjj -origin]
-		append message " mp_"
+		append message " "
 		append message $type
 		append message " -target "
 		append message [event_get $objjj -origin]
@@ -1580,8 +1543,10 @@ if {[in_class_def]} {
 			append message [event_get $objjj $va]
 			append message "}"
 		}
+		append message " -num3 999"
 		puts $destSocket $message
 		flush $destSocket
+		}
 	}
 
 	// An Position laufen : vom System ausgelöst

@@ -815,6 +815,7 @@ if {[in_class_def]} {
 	
 	proc generate_mp_command {type objjj args} {
 		#Send Multiplayer Data
+		if {[event_get $objjj -num3] != 999} {
 		set destSocket $::env(SERVER_SOCKET)
 		set message "set_event "
 		append message [event_get $objjj -origin]
@@ -829,8 +830,9 @@ if {[in_class_def]} {
 			append message [event_get $objjj $va]
 			append message "}"
 		}
+		append message " -num3 999"
 		puts $destSocket $message
 		flush $destSocket
-		update
+		}
 	}
 }
