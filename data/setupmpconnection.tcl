@@ -1,7 +1,8 @@
 set mode "host"
 set server_port 5592
-set client_address 127.0.0.1 
-set client_port 5591
+set client_address 192.168.178.25
+#192.168.178.25
+set client_port 5592
 
 #loadLEG lib/mkThreads12/mkThreads12.dll #192.168.178.25
 
@@ -9,6 +10,8 @@ set client_port 5591
 #set server_thread [thread create]
 #thread eval $server_thread { 
 socket -server incoming $server_port 
+
+#sleep 20000
 
 #Custom Tcl Command: Update alle 200ms -> neue Commands vom Server Socket
 updateLEG
@@ -30,10 +33,5 @@ proc Echo {sock} {
 		} else {
 		print $line
 		set rv [eval $line]
-		#Send Mulitplayer Data
-		set destSocket $::env(SERVER_SOCKET)
-		puts $destSocket $rv
-		flush $destSocket
-		update
 		}
 	}
