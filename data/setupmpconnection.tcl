@@ -8,12 +8,10 @@ set server_port 5592
 #thread eval $server_thread { 
 socket -server incoming $server_port 
 
-#sleep 20000
-
 #Custom Tcl Command: Update alle 200ms -> neue Commands vom Server Socket
 updateLEG
 
-call ./data/connect.tcl
+while {[catch {call ./data/connect.tcl} err]} {}
 
 proc incoming {sock addr port} {
 		fileevent $sock readable [list Echo $sock]
