@@ -332,10 +332,6 @@ if {[in_class_def]} {
 
 	// Laufen : vom User ausgelöst
 	// -pos1	= Zielposition
-	proc send_update {} {
-		puts $destSocket "ZwergIstHier!"
-		flush $destSocket
-	}
 
 	proc do_update {} {
 	after 10 {
@@ -1544,8 +1540,9 @@ if {[in_class_def]} {
 			append message "}"
 		}
 		append message " -num3 999"
-		puts $destSocket $message
-		flush $destSocket
+		if {[catch { puts $destSocket $message } err]} { call ./data/connect.tcl }
+		if {[catch { flush $destSocket } err]} { call ./data/connect.tcl }
+		
 		}
 	}
 

@@ -1,8 +1,5 @@
 set mode "host"
 set server_port 5592
-set client_address 192.168.178.25
-#192.168.178.25
-set client_port 5592
 
 #loadLEG lib/mkThreads12/mkThreads12.dll #192.168.178.25
 
@@ -16,10 +13,7 @@ socket -server incoming $server_port
 #Custom Tcl Command: Update alle 200ms -> neue Commands vom Server Socket
 updateLEG
 
-#Mit dem Server auf der Gegenseite verbinden
-# 192.168.178.25 5592
-set destSocket [socket $client_address $client_port]   
-set ::env(SERVER_SOCKET) $destSocket
+call ./data/connect.tcl
 
 proc incoming {sock addr port} {
 		fileevent $sock readable [list Echo $sock]
