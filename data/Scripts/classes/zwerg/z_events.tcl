@@ -1539,7 +1539,6 @@ if {[in_class_def]} {
 			append message [event_get $objjj $va]
 			append message "}"
 		}
-		append message " -num3 999"
 		if {[catch { puts $destSocket $message } err]} { call ./data/connect.tcl }
 		if {[catch { flush $destSocket } err]} { call ./data/connect.tcl }
 		

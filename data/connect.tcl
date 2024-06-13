@@ -1,6 +1,6 @@
-set client_address 192.168.0.53
-
-set client_port 5592
+set client_address 127.0.0.1
+# 192.168.0.53
+set client_port 5593
 
 #Mit dem Server auf der Gegenseite verbinden
 # 192.168.178.25 5592

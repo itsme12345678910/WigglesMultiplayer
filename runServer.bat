@@ -1,1 +1,1 @@
-java -jar WigglesServer.jar 5592
+java -jar WigglesServer.jar 5592 5593 192.168.0.53 5592
