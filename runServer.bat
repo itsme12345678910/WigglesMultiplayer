@@ -1,0 +1,1 @@
+java -jar WigglesServer.jar 5592
