@@ -830,7 +830,6 @@ if {[in_class_def]} {
 			append message [event_get $objjj $va]
 			append message "}"
 		}
-		append message " -num3 999"
 		puts $destSocket $message
 		flush $destSocket
 		}
