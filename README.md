@@ -16,3 +16,7 @@ Voraussetzungen:
 - Angepasste .tcl, .dll und .jar Dateien aus dem Projekt in den eigenen Wiggles Ordner kopiert
 - Java installiert und java/bin Pfad in den Systemumgebungsvariablen hinterlegt damit der Java Server gestartet werden kann
 - Beide Client müssen über zueinander Verbindungen aufbauen können (Firewall Zugriff erlaubt, IP sichtbar (am besten mit ipconfig und ping über die cmd vorher kurz testen))
+
+Bekannte Probleme:
+- Das Spiel überträgt noch nicht alle möglichen Aktionen
+- Das Spiel läuft out of Sync (Quasi nicht wirklich länger spielbar im aktuellen Stand!)
