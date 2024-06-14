@@ -6,7 +6,7 @@ Ein Wiggles Multiplayer-/Coopprojekt aus der Community
 Aktuell nur über Lan, Tools wie Hamachi für online Multiplayer oder exposed ipv4 Host möglich
 
 Anleitung:
-  1. IP des Mitspielers in der connect.tcl eintragen
+  1. IP des Mitspielers in der runServer.bat eintragen
   2. runServer.bat bei beiden Spieler ausführen
   3. Wiggles bei beiden Spielern starten
   4. Dieselbe Map bei beiden Spielern gleichzeitig starten
