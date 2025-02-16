@@ -1087,7 +1087,7 @@ if {[in_class_def]} {
 	proc mark_peer_for_dig { xcoord ycoord } {
 			if {[is_dig_marked [round $xcoord] [round $ycoord] [expr {[round [expr {$xcoord + 1}]]}] [expr {[round  [expr {$ycoord + 1}]]}]]} {
 				#Send Multiplayer Data
-				set message [concat "dig_mark" $xcoord $ycoord]
+				set message [concat "dig_mark" "0" [round $xcoord] [round $ycoord] "1"]
 				set destSocket $::env(SERVER_SOCKET)
 				if {[catch { puts $destSocket $message } err]} { call ./data/connect.tcl }
 				if {[catch { flush $destSocket } err]} { call ./data/connect.tcl }
