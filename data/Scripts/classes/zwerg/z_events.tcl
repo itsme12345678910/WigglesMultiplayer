@@ -1037,13 +1037,96 @@ if {[in_class_def]} {
 		set_objworkicons this [get_switcher_icon $evtitem] Schalter
 	}
 
+	proc round {value} {
+		return [expr {int($value + 0.5)}]
+	}
 
+	proc peer_digmark { x y coordinaten } {
+		upvar $coordinaten coords
+		set sucess "1"
+		
+		while {$sucess > 0} {
+			set sucess 0
+			if {[mark_peer_for_dig $x $y ]} {
+				if { ![coordinate_exists coords $x $y] } {
+					set sucess [expr {$sucess + 1}]
+					add_coordinate coords $x $y
+				}
+			}
+			if {[mark_peer_for_dig [expr {$x + 1}] $y ]} {
+				if { ![coordinate_exists coords [expr {$x + 1}] $y] } {
+					set sucess [expr {$sucess + 1}]
+					add_coordinate coords [expr {$x + 1}] $y
+					peer_digmark [expr {$x + 1}] $y coords
+				}
+			}
+			if {[mark_peer_for_dig $x [expr {$y + 1}] ]} {
+				if { ![coordinate_exists coords $x [expr {$y + 1}]] } {
+					set sucess [expr {$sucess + 1}]
+					add_coordinate coords $x [expr {$y + 1}]
+					peer_digmark $x [expr {$y + 1}] coords
+				}
+			}
+			if {[mark_peer_for_dig [expr {$x - 1}] $y ]} {
+				if { ![coordinate_exists coords [expr {$x - 1}] $y] } {
+					set sucess [expr {$sucess + 1}]
+					add_coordinate coords [expr {$x - 1}] $y
+					peer_digmark [expr {$x - 1}] $y coords
+				}
+			}
+			if {[mark_peer_for_dig $x [expr {$y - 1}] ]} {
+				if { ![coordinate_exists coords $x [expr {$y - 1}]] } {
+					set sucess [expr {$sucess + 1}]
+					add_coordinate coords $x [expr {$y - 1}]
+					peer_digmark $x [expr {$y - 1}] coords
+				}
+			}
+		}
+	}
+
+	proc mark_peer_for_dig { xcoord ycoord } {
+			if {[is_dig_marked [round $xcoord] [round $ycoord] [expr {[round [expr {$xcoord + 1}]]}] [expr {[round  [expr {$ycoord + 1}]]}]]} {
+				#Send Multiplayer Data
+				set message [concat "dig_mark" $xcoord $ycoord]
+				set destSocket $::env(SERVER_SOCKET)
+				if {[catch { puts $destSocket $message } err]} { call ./data/connect.tcl }
+				if {[catch { flush $destSocket } err]} { call ./data/connect.tcl }
+				return 1
+			}
+			return 0
+	}
+	
+	proc add_coordinate {coord_list x y} {
+		upvar $coord_list list   ;# Verweise auf die übergebene Liste (by reference)
+
+		# Prüfe, ob die Koordinate bereits existiert
+		if {[coordinate_exists list $x $y]} {
+			return 0  ;# Koordinate existiert bereits, nichts hinzufügen
+		}
+
+		# Füge die neue Koordinate hinzu
+		lappend list [list $x $y]
+		return 1  ;# Koordinate wurde erfolgreich hinzugefügt
+	}
+	
+	proc coordinate_exists {coord_list x y} {
+		upvar $coord_list list   ;# Verweise auf die übergebene Liste (by reference)
+
+		foreach coord $list {
+			if {[lindex $coord 0] == $x && [lindex $coord 1] == $y} {
+				return 1  ;# Koordinate wurde gefunden
+			}
+		}
+		return 0  ;# Koordinate existiert nicht
+	}
 
 	// Graben : vom User ausgelöst
 	// -pos1	= Grabeposition
 
 	proc evt_task_dig_proc {} {
-	
+		
+		set coords {}
+		peer_digmark [lindex [event_get this "-pos1"] 0] [lindex [event_get this "-pos1"] 1] coords
 		generate_mp_command "evt_task_dig" this "-pos1"
 	
 		global event_log current_plan current_workplace current_digpos
