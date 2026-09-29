@@ -49,6 +49,43 @@ typedef struct {
 } CmdInfo;
 
 /*
+ * Custom wiggles change playerid command:
+ */
+ 
+ static int
+Tcl_SetLocalPlayerObjCmd(clientData, interp, objc, objv)
+    ClientData clientData;
+    Tcl_Interp *interp;
+    int objc;
+    Tcl_Obj *CONST objv[];
+{
+    int newId;
+    unsigned char *state;
+    /* Adresse der globalen Variable "Zeiger auf Game-State" in Wiggles.exe */
+    HMODULE hExe = GetModuleHandle(NULL);  /* Basis-Adresse der laufenden EXE */
+	void **ppGameState = (void **)((unsigned char *)hExe + 0x00372400);
+    clientData = clientData; /* unused */
+    if (objc != 2) {
+	Tcl_WrongNumArgs(interp, 1, objv, "playerId");
+	return TCL_ERROR;
+    }
+    if (Tcl_GetIntFromObj(interp, objv[1], &newId) != TCL_OK) {
+	return TCL_ERROR;
+    }
+    if (newId < 0 || newId > 7) {
+	Tcl_SetResult(interp, "playerId must be 0..7", TCL_STATIC);
+	return TCL_ERROR;
+    }
+    if (ppGameState == (void **)0 || *ppGameState == (void *)0) {
+	Tcl_SetResult(interp, "game state not initialized", TCL_STATIC);
+	return TCL_ERROR;
+    }
+    state = (unsigned char *) *ppGameState;
+    *(int *)(state + 0x64) = newId;
+    return TCL_OK;
+}
+
+/*
  * The built-in commands, and the procedures that implement them:
  */
 
@@ -169,6 +206,13 @@ static CmdInfo builtInCmds[] = {
         (CompileProc *) NULL,		1},
     {"while",		(Tcl_CmdProc *) NULL,	Tcl_WhileObjCmd,
         TclCompileWhileCmd,		1},
+
+	/*
+     * Diggles custom command:
+     */
+	 
+	 {"set_local_player",		(Tcl_CmdProc *) NULL,	Tcl_SetLocalPlayerObjCmd,
+        (CompileProc *) NULL,		0},
 
     /*
      * Commands in the UNIX core:
