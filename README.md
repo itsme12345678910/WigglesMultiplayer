@@ -3,11 +3,15 @@ Ein Wiggles Multiplayer-/Coopprojekt aus der Community
 ![WiggleMPGrafikCrop](https://github.com/itsme12345678910/WigglesMultiplayer/assets/119706537/65400d10-09e0-4ea3-b1c2-4263a7a56ebf)
 
 Anleitung:
-  1. IP des Mitspielers in der runServer.bat eintragen
-  2. runServer.bat bei beiden Spieler ausführen
-  3. Wiggles bei beiden Spielern starten
-  4. Dieselbe Map bei beiden Spielern gleichzeitig starten
-  5. Die beiden Client sollten verbunden sein und das was auf dem einen Client befohlen wird sollte auf beiden umgesetzt werden (aktuell nur Coop!) 
+  1. WigglesMultiplayer.bat bei beiden Spielern starten (oder WigglesServer.jar doppelklicken)
+  2. Im Launcher die IP-Adresse des Mitspielers eintragen (die eigene zeigt der Launcher oben an), bei genau einem Spieler Host, beim anderen Client wählen und auf Starten klicken. Der Host kann einen Spielstand wählen, der automatisch zum Mitspieler übertragen wird
+  3. Der Launcher startet den WigglesServer und Wiggles. Mit gewähltem Spielstand laden beide Spiele ihn direkt beim Start, ohne Hauptmenü. Das Spiel wartet im Ladebildschirm, bis beide Spiele geladen haben, und beide starten dann gleichzeitig
+  4. Ohne Spielstand: dieselbe Map bei beiden Spielern gleichzeitig starten
+  5. Was auf dem einen Client befohlen wird, wird auf beiden umgesetzt (aktuell nur Coop!). Zufallsbewegungen von Zwergen und Tieren würfelt nur der Host, der Client übernimmt sie.
+
+Für den Einzelspieler Wiggles ganz normal starten. Der Launcher trägt die Verbindung nur für den Start aus dem Launcher in data/mp_config.tcl ein.
+
+Ohne Launcher: IP des Mitspielers in runServer.bat eintragen und ausführen, in data/mp_config.tcl mp_address auf 127.0.0.1 und mp_role auf host bzw. client setzen, dann Wiggles starten (danach mp_address wieder leeren).
 
 Voraussetzungen:
 - Angepasste .tcl, .dll und .jar Dateien aus dem Projekt in den eigenen Wiggles Ordner kopiert
@@ -17,3 +21,9 @@ Voraussetzungen:
 Bekannte Probleme:
 - Das Spiel überträgt noch nicht alle möglichen Aktionen
 - Das Spiel läuft out of Sync (Quasi nicht wirklich länger spielbar im aktuellen Stand!)
+- Nach dem Laden eines Spielstands über den Launcher liegt ein halbtransparentes Menü-Overlay über dem Spiel, zweimal Esc drücken
+
+Hinweise zur Entwicklung:
+- Die .tcl-Dateien des Spiels sind in Windows-1252 (cp1252) kodiert. Editoren oder Tools, die sie als UTF-8 speichern, zerstören die Umlaute.
+- Zufallsstellen in Klassen-Scripts laufen über data/Scripts/misc/mp_sync.tcl und werden so nur vom Host gewürfelt, z. B. [irandom 14] -> [mp_irandom schluessel standardwert 14].
+- Quellen der tcl83.dll liegen unter tcl8.3.2/. Gebaut wird mit nmake -f makefile.vc; nmake -f makefile.vc LOGCOMMANDS=1 baut die Debug-DLL, die jeden ausgeführten Befehl in die Datei commandsExecuted schreibt (nur für Reverse Engineering, nicht für den Mod).

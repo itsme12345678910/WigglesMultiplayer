@@ -137,6 +137,7 @@ def_class Zwerg none gnome 0 {reproduces lives moves} {
 		lappend seq_idle_anims {3 {blicken_rechts_links}}
 
 		// lappend seq_idle_anims {1 {kletterstand_anim}}
+		call scripts/misc/mp_sync.tcl								;// Multiplayer: Zufallsbewegungen nur vom Host
 		call data/scripts/misc/seq_idle.tcl
 
 		set tttsection_tocall "Zwerg"
@@ -188,6 +189,7 @@ def_class Zwerg none gnome 0 {reproduces lives moves} {
 	}
 
 	call scripts/classes/items/calls/takeitems.tcl
+	call scripts/misc/mp_sync.tcl
 	call scripts/classes/zwerg/z_events.tcl
 	call scripts/classes/zwerg/z_methods.tcl
 	call scripts/classes/zwerg/z_faceanim.tcl
