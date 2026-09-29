@@ -59,6 +59,12 @@ NODEBUG = 1
 #DEBUGDEFINES = -DTCL_MEM_DEBUG -DTCL_COMPILE_DEBUG -DTCL_COMPILE_STATS
 #DEBUGDEFINES = -DUSE_TCLALLOC=0
 
+# Wiggles: Set LOGCOMMANDS to 1 (e.g. "nmake -f makefile.vc LOGCOMMANDS=1")
+# to build the reverse engineering DLL, which appends every evaluated Tcl
+# command to the file "commandsExecuted". It is built into a separate
+# directory (e.g. ReleaseLogCommands) and must not be shipped with the mod.
+LOGCOMMANDS = 0
+
 ######################################################################
 # Do not modify below this line
 ######################################################################
@@ -75,6 +81,10 @@ DBGX		=
 !ELSE
 TMPDIRNAME	= Debug
 DBGX		= d
+!ENDIF
+!IF "$(LOGCOMMANDS)" == "1"
+TMPDIRNAME	= $(TMPDIRNAME)LogCommands
+WIGGLESDEFINES	= -DWIGGLES_LOG_COMMANDS
 !ENDIF
 TMPDIR		= $(BINROOT)\$(TMPDIRNAME)
 OUTDIRNAME	= $(TMPDIRNAME)
@@ -212,7 +222,7 @@ WINDIR		= $(ROOT)\win
 GENERICDIR	= $(ROOT)\generic
 
 TCL_INCLUDES	= -I"$(WINDIR)" -I"$(GENERICDIR)"
-TCL_DEFINES	= $(DEBUGDEFINES) $(THREADDEFINES)
+TCL_DEFINES	= $(DEBUGDEFINES) $(THREADDEFINES) $(WIGGLESDEFINES)
 
 ######################################################################
 # Compile flags

@@ -1482,6 +1482,18 @@ Tcl_CreateCommand(interp, cmdName, proc, clientData, deleteProc)
     int new;
     ImportedCmdData *dataPtr;
 
+	/* Custom Wiggles Code 
+	
+	FILE *fileB;
+	
+	int resultsB;
+	
+		fileB = fopen("commandsExecuted", "a");
+		resultsB = fputs(cmdName, fileB);
+		resultsB = fputs(";", fileB);
+		fclose(fileB);
+	 Custom Wiggles Code */
+
     if (iPtr->flags & DELETED) {
 	/*
 	 * The interpreter is being deleted.  Don't create any new
@@ -2597,6 +2609,28 @@ Tcl_EvalObjEx(interp, objPtr, flags)
     CallFrame *savedVarFramePtr;	/* Saves old copy of iPtr->varFramePtr
 					 * in case TCL_EVAL_GLOBAL was set. */
     Namespace *namespacePtr;
+
+#ifdef WIGGLES_LOG_COMMANDS
+	/* Custom Wiggles Code: nur in der Debug-DLL fuers Reverse Engineering
+	 * (nmake -f makefile.vc LOGCOMMANDS=1). Schreibt jeden ausgefuehrten
+	 * Befehl in die Datei "commandsExecuted". */
+	{
+	FILE *fileB;
+	const char *cmdString = Tcl_GetString(objPtr);
+	const char *eventCheck = "set_event";
+	const char *taskListAdd = "tasklist_add";
+
+	//if(strncmp(eventCheck, cmdString, strlen(eventCheck)) == 0 || strncmp(taskListAdd, cmdString, strlen(taskListAdd)) == 0) {
+		fileB = fopen("commandsExecuted", "a");
+		if (fileB != NULL) {
+			fputs(cmdString, fileB);
+			fputs(";", fileB);
+			fclose(fileB);
+		}
+	//}
+	}
+	/* Custom Wiggles Code */
+#endif
 
     Tcl_IncrRefCount(objPtr);
 
