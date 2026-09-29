@@ -3,12 +3,15 @@ Ein Wiggles Multiplayer-/Coopprojekt aus der Community
 ![WiggleMPGrafikCrop](https://github.com/itsme12345678910/WigglesMultiplayer/assets/119706537/65400d10-09e0-4ea3-b1c2-4263a7a56ebf)
 
 Anleitung:
-  1. IP des Mitspielers in der runServer.bat eintragen
-  2. In data/mp_config.tcl bei beiden Spielern mp_address auf 127.0.0.1 setzen, bei genau einem Spieler mp_role auf host, beim anderen auf client (ohne Eintrag in mp_address läuft Wiggles wie das normale Einzelspieler-Spiel)
-  3. runServer.bat bei beiden Spieler ausführen
-  4. Wiggles bei beiden Spielern starten (der Ladebildschirm wartet, bis die Verbindung steht)
-  5. Dieselbe Map bei beiden Spielern gleichzeitig starten
-  6. Die beiden Client sollten verbunden sein und das was auf dem einen Client befohlen wird sollte auf beiden umgesetzt werden (aktuell nur Coop!). Zufallsbewegungen von Zwergen und Tieren würfelt nur der Host, der Client übernimmt sie.
+  1. WigglesMultiplayer.bat bei beiden Spielern starten (oder WigglesServer.jar doppelklicken)
+  2. Im Launcher die IP-Adresse des Mitspielers eintragen (die eigene zeigt der Launcher oben an), bei genau einem Spieler Host, beim anderen Client wählen und auf Starten klicken
+  3. Der Launcher startet den WigglesServer und Wiggles; das Spiel wartet im Ladebildschirm, bis beide verbunden sind
+  4. Dieselbe Map bei beiden Spielern gleichzeitig starten
+  5. Was auf dem einen Client befohlen wird, wird auf beiden umgesetzt (aktuell nur Coop!). Zufallsbewegungen von Zwergen und Tieren würfelt nur der Host, der Client übernimmt sie.
+
+Für den Einzelspieler Wiggles ganz normal starten. Der Launcher trägt die Verbindung nur für den Start aus dem Launcher in data/mp_config.tcl ein.
+
+Ohne Launcher: IP des Mitspielers in runServer.bat eintragen und ausführen, in data/mp_config.tcl mp_address auf 127.0.0.1 und mp_role auf host bzw. client setzen, dann Wiggles starten (danach mp_address wieder leeren).
 
 Voraussetzungen:
 - Angepasste .tcl, .dll und .jar Dateien aus dem Projekt in den eigenen Wiggles Ordner kopiert

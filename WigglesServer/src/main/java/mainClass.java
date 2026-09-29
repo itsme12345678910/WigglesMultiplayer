@@ -2,6 +2,11 @@ public class mainClass {
 
     //arguments serverPort proxyPort targetIP targetPort log
     public static void main(String[] args) {
+        // Ohne Argumente (Doppelklick, WigglesMultiplayer.bat) startet der Launcher mit Oberflaeche
+        if (args.length == 0) {
+            Launcher.main(args);
+            return;
+        }
         if (args.length < 4) {
             System.out.println("Aufruf: java -jar WigglesServer.jar <serverPort> <proxyPort> <targetIP> <targetPort> [log]");
             return;
