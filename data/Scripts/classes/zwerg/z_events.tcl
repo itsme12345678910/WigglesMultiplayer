@@ -1087,10 +1087,7 @@ if {[in_class_def]} {
 	proc mark_peer_for_dig { xcoord ycoord } {
 			if {[is_dig_marked [round $xcoord] [round $ycoord] [expr {[round [expr {$xcoord + 1}]]}] [expr {[round  [expr {$ycoord + 1}]]}]]} {
 				#Send Multiplayer Data
-				set message [concat "dig_mark" "0" [round $xcoord] [round $ycoord] "1"]
-				set destSocket $::env(SERVER_SOCKET)
-				if {[catch { puts $destSocket $message } err]} { call ./data/connect.tcl }
-				if {[catch { flush $destSocket } err]} { call ./data/connect.tcl }
+				mp_send [concat "dig_mark" "0" [round $xcoord] [round $ycoord] "1"]
 				return 1
 			}
 			return 0
@@ -1125,9 +1122,11 @@ if {[in_class_def]} {
 
 	proc evt_task_dig_proc {} {
 		
-		set coords {}
-		peer_digmark [lindex [event_get this "-pos1"] 0] [lindex [event_get this "-pos1"] 1] coords
-		generate_mp_command "evt_task_dig" this "-pos1"
+		if {[mp_active]} {
+			set coords {}
+			peer_digmark [lindex [event_get this "-pos1"] 0] [lindex [event_get this "-pos1"] 1] coords
+			generate_mp_command "evt_task_dig" this "-pos1"
+		}
 	
 		global event_log current_plan current_workplace current_digpos
 		global last_event event_repeat current_tool_class last_userevent_time
@@ -1607,8 +1606,8 @@ if {[in_class_def]} {
 
 	proc generate_mp_command {type objjj args} {
 		#Send Multiplayer Data
+		if {![mp_active]} {return}
 		if {[event_get $objjj -num3] != 999} {
-		set destSocket $::env(SERVER_SOCKET)
 		set message "set_event "
 		append message [event_get $objjj -origin]
 		append message " "
@@ -1622,8 +1621,7 @@ if {[in_class_def]} {
 			append message [event_get $objjj $va]
 			append message "}"
 		}
-		if {[catch { puts $destSocket $message } err]} { call ./data/connect.tcl }
-		if {[catch { flush $destSocket } err]} { call ./data/connect.tcl }
+		mp_send $message
 		
 		}
 	}

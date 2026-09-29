@@ -2,6 +2,7 @@
 
 if {[in_class_def]} {
 // class definition part
+	call scripts/misc/mp_sync.tcl
 
     set BOXED_CLASSES "production energy store elevator protection"
 	member BOXED_CLASSES
@@ -443,6 +444,7 @@ if {[in_class_def]} {
 
 } else {
 
+	call scripts/misc/mp_sync.tcl
 	set_physic this 1				;# die punktphysik einschalten
 	set_viewinfog this 1
 	set_selectable this 1
@@ -815,8 +817,8 @@ if {[in_class_def]} {
 	
 	proc generate_mp_command {type objjj args} {
 		#Send Multiplayer Data
+		if {![mp_active]} {return}
 		if {[event_get $objjj -num3] != 999} {
-		set destSocket $::env(SERVER_SOCKET)
 		set message "set_event "
 		append message [event_get $objjj -origin]
 		append message " "
@@ -830,8 +832,7 @@ if {[in_class_def]} {
 			append message [event_get $objjj $va]
 			append message "}"
 		}
-		puts $destSocket $message
-		flush $destSocket
+		mp_send $message
 		}
 	}
 }
