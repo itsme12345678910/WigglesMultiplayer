@@ -4,9 +4,9 @@ Ein Wiggles Multiplayer-/Coopprojekt aus der Community
 
 Anleitung:
   1. WigglesMultiplayer.bat bei beiden Spielern starten (oder WigglesServer.jar doppelklicken)
-  2. Im Launcher die IP-Adresse des Mitspielers eintragen (die eigene zeigt der Launcher oben an), bei genau einem Spieler Host, beim anderen Client wählen und auf Starten klicken
-  3. Der Launcher startet den WigglesServer und Wiggles; das Spiel wartet im Ladebildschirm, bis beide verbunden sind
-  4. Dieselbe Map bei beiden Spielern gleichzeitig starten
+  2. Im Launcher die IP-Adresse des Mitspielers eintragen (die eigene zeigt der Launcher oben an), bei genau einem Spieler Host, beim anderen Client wählen und auf Starten klicken. Der Host kann einen Spielstand wählen, der automatisch zum Mitspieler übertragen wird
+  3. Der Launcher startet den WigglesServer und Wiggles. Mit gewähltem Spielstand laden beide Spiele ihn direkt beim Start, ohne Hauptmenü. Das Spiel wartet im Ladebildschirm, bis beide Spiele geladen haben, und beide starten dann gleichzeitig
+  4. Ohne Spielstand: dieselbe Map bei beiden Spielern gleichzeitig starten
   5. Was auf dem einen Client befohlen wird, wird auf beiden umgesetzt (aktuell nur Coop!). Zufallsbewegungen von Zwergen und Tieren würfelt nur der Host, der Client übernimmt sie.
 
 Für den Einzelspieler Wiggles ganz normal starten. Der Launcher trägt die Verbindung nur für den Start aus dem Launcher in data/mp_config.tcl ein.
@@ -21,6 +21,7 @@ Voraussetzungen:
 Bekannte Probleme:
 - Das Spiel überträgt noch nicht alle möglichen Aktionen
 - Das Spiel läuft out of Sync (Quasi nicht wirklich länger spielbar im aktuellen Stand!)
+- Nach dem Laden eines Spielstands über den Launcher liegt ein halbtransparentes Menü-Overlay über dem Spiel, zweimal Esc drücken
 
 Hinweise zur Entwicklung:
 - Die .tcl-Dateien des Spiels sind in Windows-1252 (cp1252) kodiert. Editoren oder Tools, die sie als UTF-8 speichern, zerstören die Umlaute.

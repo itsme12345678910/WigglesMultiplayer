@@ -28,18 +28,30 @@ public class TCPClient {
         }
     }
 
-    public synchronized void send(String line) {
+    public void send(String line) {
+        trySend(line, true);
+    }
+
+    /**
+     * @param logDropped ob eine verworfene Zeile ausgegeben wird (nicht bei Spielstand-Daten)
+     * @return false, wenn nicht verbunden oder das Senden fehlgeschlagen ist
+     */
+    public synchronized boolean trySend(String line, boolean logDropped) {
         if (os == null) {
-            System.out.println("[proxy] Nicht verbunden, verworfen: " + line);
-            return;
+            if (logDropped) {
+                System.out.println("[proxy] Nicht verbunden, verworfen: " + line);
+            }
+            return false;
         }
         try {
             os.write((line + "\n").getBytes(StandardCharsets.ISO_8859_1));
             os.flush();
+            return true;
         } catch (IOException e) {
             System.out.println("[proxy] Senden fehlgeschlagen (" + e.getMessage() + "), verbinde neu ...");
             closeSocket();
             startReconnect();
+            return false;
         }
     }
 
