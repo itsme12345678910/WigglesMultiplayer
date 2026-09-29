@@ -28,9 +28,11 @@ def_class Riesenhamster none monster 1 {} {
 
 		call scripts/classes/characters/rh_procs.tcl				;// misc procs
 		call scripts/misc/genericfight.tcl
+		call scripts/misc/mp_sync.tcl
 	}
 
 	call scripts/misc/genericfight.tcl
+	call scripts/misc/mp_sync.tcl
 	call scripts/classes/characters/rh_methods.tcl
 
 
@@ -117,17 +119,17 @@ def_class Riesenhamster none monster 1 {} {
 
 		set_idle_anim	;#set idle anim
 
-		set rnd [random]
+		set rnd [mp_random idle 0.9]
 		if { $rnd < 0.4 } {					;# 80%-rumlaufen 20%-filler
-			tasklist_add this "walk_random [expr {4 + [irandom 3]}]"
+			tasklist_add this "walk_random [expr {4 + [mp_irandom walkradius 1 3]}]"
 		} elseif { $rnd < 0.8 } {
-			tasklist_add this "run_random [expr {4 + [irandom 3]}]"
+			tasklist_add this "run_random [expr {4 + [mp_irandom runradius 1 3]}]"
 		} else {
-			set rnd [hf2i [random 3]]
+			set rnd [hf2i [mp_random filler 1.0 3]]
 			switch $rnd {
-				0 {tasklist_add this "sleeping [irandom 2 6]"}
-				1 {tasklist_add this "waiting  [irandom 5 10]"}
-				2 {tasklist_add this "cleaning [irandom 1 3]"}
+				0 {tasklist_add this "sleeping [mp_irandom sleeptime 2 2 6]"}
+				1 {tasklist_add this "waiting  [mp_irandom waittime 5 5 10]"}
+				2 {tasklist_add this "cleaning [mp_irandom cleantime 1 1 3]"}
 			}
 		}
 

@@ -24,7 +24,9 @@ def_class Raupe food material 0 {reproduces lives moves} {
 
 	call scripts/misc/aggr_events.tcl
 	
+	call scripts/misc/mp_sync.tcl
 	obj_init {
+		call scripts/misc/mp_sync.tcl
 
 		call scripts/misc/aggr_events.tcl
 		
@@ -67,14 +69,22 @@ def_class Raupe food material 0 {reproduces lives moves} {
 		proc crawl_free {} {
 			if {[get_max_fow this]<10} {return 0}
 			set rpos [get_pos this]
-			set crot [expr {[get_roty this]+1.57}]
-			set nrot [expr {$crot+rand()*3-1.5}]
-			if {[find_plant]} {return}
-			if {rand()<0.2} {
-				fincr nrot 3.14
+			if {[mp_is_client]} {
+				# Multiplayer: das Kriechziel kommt vom Host, ohne Host bleibt die Raupe liegen
+				if {[find_plant]} {return}
+				set place [mp_take_pos crawl]
+				if {$place == ""} {set place {-1 -1 -1}}
+			} else {
+				set crot [expr {[get_roty this]+1.57}]
+				set nrot [expr {$crot+rand()*3-1.5}]
+				if {[find_plant]} {return}
+				if {rand()<0.2} {
+					fincr nrot 3.14
+				}
+				set npos [vector_add $rpos [get_vectorxz $nrot [random 2.0 4.0]]]
+				set place [get_place -center $npos -circle 3 -nearpos $rpos -random 2]
+				mp_give crawl $place
 			}
-			set npos [vector_add $rpos [get_vectorxz $nrot [random 2.0 4.0]]]
-			set place [get_place -center $npos -circle 3 -nearpos $rpos -random 2]
 			if {[lindex $place 0]<0} {
 				wait 3
 			} else {
@@ -101,11 +111,13 @@ def_class Raupe food material 0 {reproduces lives moves} {
 			set xp [expr {$xn+3.5}]
 			set zp [expr {$zn+6}]
 			//log "$xn $xp $zn $zp ($center) ($farmpos)"
-			if {$gnome} {
-				set place [get_place -center $center -rect $xn $zn $xp $zp -mindist 0.6 -nearpos $near -random 2]
-			} else {
-				set place [get_place -center $center -rect $xn $zn $xp $zp -mindist 0.6 -random 2]
-			}
+			set place [mp_choose farmcrawl {0 0 0} {
+				if {$gnome} {
+					get_place -center $center -rect $xn $zn $xp $zp -mindist 0.6 -nearpos $near -random 2
+				} else {
+					get_place -center $center -rect $xn $zn $xp $zp -mindist 0.6 -random 2
+				}
+			}]
 			if {[lindex $place 0]<1} {
 				wait 3
 			} else {
@@ -226,7 +238,7 @@ def_class Raupe food material 0 {reproduces lives moves} {
 				state_triggerfresh this free
 				//log "farmed->free"
 			} else {
-				if {rand()<0.05} {
+				if {[mp_rand farmwait 0.0]<0.05} {
 					wait 1
 				} else {
 					crawl_farmed
@@ -278,7 +290,7 @@ def_class Raupe food material 0 {reproduces lives moves} {
 		if {$approached} {
 			if {$approached==1} {
 				set approached 2
-				set attackanim [lindex {5 9} [irandom 2]]
+				set attackanim [mp_pick attackanim {5 9} 5]
 				set particledir [get_vectorxz $angle 0.02]
 				lrep particledir 1 -0.02
 				set particlepos [vector_add $ppos [vector_mul $particledir 15.0]]

@@ -7,6 +7,12 @@ proc walk_pos {pos} {
 
 
 proc walk_random {plength} {
+	if {[mp_active]} {
+		# Multiplayer: Zielpunkt vom Host statt Zufallspfad der Engine, ohne Host kurz warten
+		set place [mp_random_target walkrandom $plength]
+		if {$place == ""} {return [wait_time 1.0]}
+		return [walk_pos $place]
+	}
 	state_disable this
 	action this walk "-canclimb 0 -animsets \{0 0 0 0\}  -randompath $plength -randomz 5" {state_enable this}
 	return true
@@ -22,6 +28,12 @@ proc run_pos {pos} {
 
 
 proc run_random {plength} {
+	if {[mp_active]} {
+		# Multiplayer: Zielpunkt vom Host statt Zufallspfad der Engine, ohne Host kurz warten
+		set place [mp_random_target runrandom $plength]
+		if {$place == ""} {return [wait_time 1.0]}
+		return [run_pos $place]
+	}
 	state_disable this
 	action this walk "-canclimb 0 -animsets 1 -randompath $plength -randomz 5" {state_enable this}
 	return true
@@ -97,7 +109,7 @@ proc set_idle_anim {} {
 
 
 proc loop_anim {anim min max} {
-	set reps [hf2i [random [expr $max - $min]]]
+	set reps [hf2i [mp_random loopreps 0.0 [expr $max - $min]]]
 	incr reps $min
 	for {set i 0} {$i < $reps} {incr i} {
 		tasklist_add this "play_anim $anim"

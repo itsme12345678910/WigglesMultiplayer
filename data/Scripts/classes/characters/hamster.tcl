@@ -86,7 +86,9 @@ def_class Hamster food material 0 {reproduces lives moves} {
 
 	call scripts/misc/aggr_events.tcl
 	
+	call scripts/misc/mp_sync.tcl
 	obj_init {
+		call scripts/misc/mp_sync.tcl
 
 		call scripts/misc/aggr_events.tcl
 		
@@ -137,12 +139,24 @@ def_class Hamster food material 0 {reproduces lives moves} {
 		}
 
 		proc walk_random {plength} {
+			if {[mp_active]} {
+				# Multiplayer: Zielpunkt vom Host statt Zufallspfad der Engine, ohne Host kurz warten
+				set place [mp_random_target walkrandom $plength]
+				if {$place == ""} {return [wait_time 1.0]}
+				return [walk_pos $place]
+			}
 			state_disable this
 			action this walk "-canclimb 0 -randompath $plength -randomz 4 -animsets 0 -useobjects 0" {state_enable this}
 			return true
 		}
 
 		proc hoppel_random {plength} {
+			if {[mp_active]} {
+				# Multiplayer: Zielpunkt vom Host statt Zufallspfad der Engine, ohne Host kurz warten
+				set place [mp_random_target hoppelrandom $plength]
+				if {$place == ""} {return [wait_time 1.0]}
+				return [hoppel_pos $place]
+			}
 			state_disable this
 			action this walk "-canclimb 0 -randompath $plength -randomz 2 -animsets 1  -useobjects 0" {state_enable this}
 			return true
@@ -170,7 +184,7 @@ def_class Hamster food material 0 {reproduces lives moves} {
 
 		proc loop_anim {anim min max} {
 			tasklist_add this [list play_anim ${anim}start]
-			set reps [irandom [expr $max - $min]]
+			set reps [mp_irandom loopreps 0 [expr $max - $min]]
 			incr reps $min
 			for {set i 0} {$i < $reps} {incr i} {
 				tasklist_add this [list play_anim ${anim}loop]
@@ -388,18 +402,21 @@ def_class Hamster food material 0 {reproduces lives moves} {
 			} 
 			
 			if { $is_farmed } {
-				set activity [irandom 5]
-				if {$activity == $last_activity} {
-					set activity [expr {($activity + 1) % 5}]
-				}
+				set activity [mp_choose activity 2 {
+					set activity [irandom 5]
+					if {$activity == $last_activity} {
+						set activity [expr {($activity + 1) % 5}]
+					}
+					set activity
+				}]
 				set last_activity $activity
 				switch $activity {
 					0	{loop_anim clean 2 6}
 					1	{play_anim beg}
-					2	{wait_time [random 1.5 4.0]}
+					2	{wait_time [mp_random waittime 2.0 1.5 4.0]}
 					3	{loop_anim sleep 6 10}
 					default {
-						set newpos [irandom 35]
+						set newpos [mp_irandom farmpos 17 35]
 						set newx [expr {($newpos%7)*0.5-1.5}]
 						set newz [expr {($newpos/7)-2.0}]
 						set newpos [vector_add $farmpos [list $newx 0 $newz]]
@@ -411,17 +428,20 @@ def_class Hamster food material 0 {reproduces lives moves} {
 					return
 				}
 		
-				set activity [irandom 6]
-				if {$activity == $last_activity} {
-					set activity [expr {($activity + 1) % 6}]
-				}
+				set activity [mp_choose activity 2 {
+					set activity [irandom 6]
+					if {$activity == $last_activity} {
+						set activity [expr {($activity + 1) % 6}]
+					}
+					set activity
+				}]
 				set last_activity $activity
 				switch $activity {
 					0	{loop_anim clean 2 6}
 					1	{play_anim beg}
-					2	{wait_time [random 1.5 4.0]}
+					2	{wait_time [mp_random waittime 2.0 1.5 4.0]}
 					3	{loop_anim sleep 6 10}
-					default {hoppel_random [irandom 2 4]}
+					default {hoppel_random [mp_irandom hoppelradius 3 2 4]}
 				}
 			}
 			state_trigger this task
