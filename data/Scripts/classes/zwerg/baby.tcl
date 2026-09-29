@@ -112,7 +112,10 @@ def_class Baby none baby 0 {lives moves} {
 		tasklist_add this "walk_out_of $prodref"
 	}
 
+	call scripts/misc/mp_sync.tcl
+
 	obj_init {
+		call scripts/misc/mp_sync.tcl
 
 		set is_initialized 	0
 		set idletimeout 	0
@@ -181,6 +184,16 @@ def_class Baby none baby 0 {lives moves} {
 
 		proc crawl_random {plength} {
 			state_disable this
+			if {[mp_active]} {
+				# Multiplayer: Zielpunkt vom Host statt Zufallspfad der Engine, ohne Host kurz warten
+				set place [mp_random_target crawlrandom $plength]
+				if {$place == ""} {
+					action this wait 2 {state_enable this}
+				} else {
+					action this walk "-canclimb 0 -animsets 2 -target \{$place\}" {state_enable this}
+				}
+				return true
+			}
 			action this walk "-canclimb 0 -animsets 2 -randompath $plength -randomz 3" {state_enable this}
 			return true
 		}
@@ -188,7 +201,7 @@ def_class Baby none baby 0 {lives moves} {
 		proc walk_pos {pos} {
 			state_disable this
 			set pos [vector_fix $pos]
-			action this walk "-target \{$pos\}  -animsets [irandom 2]" {state_enable this}
+			action this walk "-target \{$pos\}  -animsets [mp_irandom walkanimset 0 2]" {state_enable this}
 			return true
 		}
 
@@ -266,7 +279,7 @@ def_class Baby none baby 0 {lives moves} {
 
 		proc loop_anim {anim min max} {
 			tasklist_add this [list play_anim ${anim}start]
-			set reps [hf2i [random [expr $max - $min]]]
+			set reps [hf2i [mp_random loopreps 0.0 [expr $max - $min]]]
 			incr reps $min
 			for {set i 0} {$i < $reps} {incr i} {
 				tasklist_add this [list play_anim ${anim}loop]
@@ -513,11 +526,11 @@ def_class Baby none baby 0 {lives moves} {
 
 		// 70%-rumlaufen 30%-filler
 
-		set rnd [random 1.0]
+		set rnd [mp_random babyidle 0.0 1.0]
 		if { $rnd < 0.7} {
-			tasklist_add this "crawl_random [hf2i [random 2 4]]"
+			tasklist_add this "crawl_random [hf2i [mp_random crawlradius 3.0 2 4]]"
 		} else {
-			set rnd [irandom 6]
+			set rnd [mp_irandom babyfiller 2 6]
 			switch $rnd {
 				0 {loop_anim cry 10 30}
 				1 {loop_anim tantrum 4 14}

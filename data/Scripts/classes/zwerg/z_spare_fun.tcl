@@ -288,7 +288,7 @@ proc sparetime_fun_loop {} {
 			lappend selfactlist "sptfun_pipesmoking"
 		//	log $selfactlist
 			tasklist_add this "sparetime_fun_relief 0.02"
-			eval [lindex $selfactlist [irandom [llength $selfactlist]]]
+			eval [mp_pick selfact $selfactlist sparetime_idle_loop]
 			set sparetime_fun_mode "none"
 			sparetime_fun_entry "none"
 			set spt_fun_ignore 1
@@ -296,14 +296,14 @@ proc sparetime_fun_loop {} {
 		"none" {
 			if {[get_gnomeposition this]} {sparetime_climb_somewhere;return}
 			global civ_state stt_fun_idleloss
-			tasklist_add this {play_anim standloop[string index abcd [irandom 4]]}
+			tasklist_add this {play_anim standloop[mp_pick funstand {a b c d} a]}
 			tasklist_add this "sparetime_idle_loop"
-			tasklist_add this {play_anim standloop[string index abcd [irandom 4]]}
-			tasklist_add this {play_anim standloop[string index abcd [irandom 4]]}
+			tasklist_add this {play_anim standloop[mp_pick funstand {a b c d} a]}
+			tasklist_add this {play_anim standloop[mp_pick funstand {a b c d} a]}
 			tasklist_add this "sparetime_idle_loop"
 			set loss [hmax [expr {-$stt_fun_idleloss}] [expr {-0.03*$civ_state}] -0.01]
 			tasklist_add this "add_attrib this atr_Mood $loss"
-			tasklist_add this {play_anim standloop[string index abcd [irandom 4]]}
+			tasklist_add this {play_anim standloop[mp_pick funstand {a b c d} a]}
 			tasklist_add this "sparetime_idle_loop"
 			if {[is_selected this]} {fun_log " ml $loss"}
 			set sparetime_fun_mode "self"
@@ -562,7 +562,7 @@ proc sparetime_take_seat {place {meth 0} {gst 0}} {
 	//tasklist_add this "play_anim sitdown_chair"
 }
 proc sparetime_place_talk {} {
-	play_anim sitchairbeertalk[string index "abc" [irandom 3]]
+	play_anim sitchairbeertalk[mp_pick beertalk {a b c} a]
 	log "[get_objname this] place_talking"
 }
 proc sparetime_place_end {} {

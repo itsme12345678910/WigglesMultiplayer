@@ -722,7 +722,25 @@ proc walk_pos_dig {pos dpos} {
 }
 
 proc walk_random {plength} {
-	set place [get_place -center [get_pos this] -circle $plength -mindist 0.7 -random $plength -walldist 1]
+	if {[mp_is_client]} {
+		# Multiplayer: das Ziel kommt vom Host, ohne Host wird nicht zufaellig gelaufen
+		set place [mp_take_pos walkrandom]
+		if {$place == ""} {return false}
+	} else {
+		set place [get_place -center [get_pos this] -circle $plength -mindist 0.7 -random $plength -walldist 1]
+		if {[lindex $place 0]<1} {return false}
+		mp_give walkrandom $place
+	}
+	walk_pos $place
+	return true
+}
+
+// Multiplayer: bekommt der Client kein Ziel vom Host, weicht er nicht zufaellig, sondern auf den naechsten
+// freien Platz aus, damit er niemandem den Weg versperrt
+proc walk_random_or_aside {plength} {
+	if {[walk_random $plength]} {return true}
+	if {![mp_is_client]} {return false}
+	set place [get_place -center [get_pos this] -circle $plength -mindist 0.7 -walldist 1]
 	if {[lindex $place 0]<1} {return false}
 	walk_pos $place
 	return true
@@ -882,7 +900,7 @@ proc walk_free {} {
 }
 
 proc walk_around {} {
-	tasklist_add this "walk_random [irandom 2 4]"
+	tasklist_add this "walk_random [mp_irandom walkradius 3 2 4]"
 	tasklist_add this "adjust_gnome_rotation"
 }
 

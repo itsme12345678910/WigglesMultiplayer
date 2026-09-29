@@ -1295,14 +1295,14 @@ proc act_when_idle {} {
 	set idle 1
 	if {[placelock_check [get_pos this] 0.8 $myref]} {
 		log "[get_objname this] leaves locked place at [get_pos this]"
-		walk_random [irandom 2 4]
+		walk_random_or_aside [mp_irandom leaveradius 3 2 4]
 		set idle 0
 	} else {
 		set ol [lnand 0 [obj_query this -class {Zwerg Baby} -boundingbox {-0.6 -0.3 -1.2 0.6 0.3 1.2}]]
 		foreach o $ol {
 			if {[get_walkresult $o]!=2} {
 			//	log "[get_objname this] leaves occupied place at [get_pos this]"
-				walk_random [irandom 2 4]
+				walk_random_or_aside [mp_irandom leaveradius 3 2 4]
 				set idle 0
 				break
 			}
@@ -1697,7 +1697,7 @@ proc set_idle_anim {} {
 		return
 	}
 	if { [get_gnomeposition this] == 0 } {
-			switch [hf2i [random 4]] {
+			switch [hf2i [mp_random standanim 0.0 4]] {
 				0 	{set_anim this mann.stand_anim_a 0 2 ;#set idle anim}
 				1	{set_anim this mann.stand_anim_b 0 2 ;#set idle anim}
 				2	{set_anim this mann.stand_anim_c 0 2 ;#set idle anim}

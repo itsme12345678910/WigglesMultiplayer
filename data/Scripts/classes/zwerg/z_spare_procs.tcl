@@ -331,7 +331,7 @@ proc sparetime_eat_wait {} {
 	set targetgnome [obj_query this "-class Zwerg -owner own -range 5 -limit 1"]
 	add_attrib this atr_Mood $stt_wait_forseat
 	tasklist_add this "rotate_towards $targetgnome"
-	tasklist_add this [lindex $sparetime_activities [irandom 14]]
+	tasklist_add this [lindex $sparetime_activities [mp_irandom eatwait 0 14]]
 	tasklist_add this "play_anim hungry"
 }
 proc sparetime_eat {item mode} {
@@ -498,7 +498,7 @@ proc sparetime_slp_start {} {
 			if {[placelock_check $spos 0.9 $myref]} {continue}
 			if {$sp&&-1!=[lsearch [list 0 $myref] [obj_query $sp "-class Zwerg -range 2 -limit 1"]]} {
 				//if {[lindex [set spoint [get_place -center $spos -circle 1.1 -walldist 1 -except this -placelockidexcept $myref]] 0]>1}
-				set angle [random 1.3 1.9]
+				set angle [mp_random sleepangle 1.6 1.3 1.9]
 				//	set sparetime_slp_mode "pilz"
 				//	break
 				// else {log "no place found near Pilz $sp"}
@@ -845,7 +845,7 @@ proc sparetime_ill_check {} {
 
 proc sparetime_random {} {
 	global sparetime_activities
-	eval [lindex $sparetime_activities [irandom [llength $sparetime_activities]]]
+	eval [mp_pick spareact $sparetime_activities "play_anim standloopa"]
 }
 
 proc sparetime_find_place {} {
@@ -917,11 +917,11 @@ proc sparetime_check_in {placeref {meth 0}} {
 }
 
 proc sparetime_filler_loop {} {
-	play_anim [lindex {breathe teeter_t wait scout wipenose cough teeter_w scout} [irandom 8]]
+	play_anim [mp_pick filleranim {breathe teeter_t wait scout wipenose cough teeter_w scout} breathe]
 }
 
 proc sparetime_idle_loop {} {
-	play_anim [lindex {standloopa standloopb standloopc standloopd jumpa scratch breathe teeter_t wait scout wipenose cough teeter_w kneebend} [irandom 14]]
+	play_anim [mp_pick spareidle {standloopa standloopb standloopc standloopd jumpa scratch breathe teeter_t wait scout wipenose cough teeter_w kneebend} standloopa]
 }
 
 proc sparetime_react_towater {} {

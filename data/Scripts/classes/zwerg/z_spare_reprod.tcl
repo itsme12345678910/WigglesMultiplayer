@@ -367,7 +367,7 @@ if {[in_class_def]} {
 				if {$gnome_gender=="female"} {
 					//Sexanimation festlegen
 					global sparetime_sexanim
-					set sparetime_sexanim sexfloor[string index ab [irandom 2]]
+					set sparetime_sexanim sexfloor[mp_pick sexanim {a b} a]
 					//Nur Frauen: popplace aussuchen
 					set mypos [get_pos this]
 					set hispos [get_pos $reprod_partner]
@@ -421,7 +421,7 @@ if {[in_class_def]} {
 				set othdist [vector_dist3d $othpos $othpp]
 				log "[get_objname this] mp $mypos op $othpos md $mydist od $othdist mpp $sparetime_popplace opp $othpp"
 				if {$othdist>$mydist} {
-					play_anim [lindex {standloopa standloopb standloopc standloopd jumpa scratch breathe teeter_t wait scout wipenose cough teeter_w kneebend} [irandom 14]]
+					play_anim [mp_pick reprodidle {standloopa standloopb standloopc standloopd jumpa scratch breathe teeter_t wait scout wipenose cough teeter_w kneebend} standloopa]
 				} else {
 					if {$mydist>0.3} {
 						tasklist_add this "walk_pos \{$sparetime_popplace\} 1"
@@ -431,7 +431,7 @@ if {[in_class_def]} {
 					} elseif {[call_method $reprod_partner reprod_getactioncount]>1} {
 						incr reprod_actioncount
 					} else {
-						play_anim [lindex {standloopa standloopb standloopc standloopd jumpa scratch breathe teeter_t wait scout wipenose cough teeter_w kneebend} [irandom 14]]
+						play_anim [mp_pick reprodidle {standloopa standloopb standloopc standloopd jumpa scratch breathe teeter_t wait scout wipenose cough teeter_w kneebend} standloopa]
 					}
 				}
 				return

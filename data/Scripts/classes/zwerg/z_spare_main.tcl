@@ -54,7 +54,7 @@ if {[in_class_def]} {
 			if {$last_spareleave<$time_count_start-100||$sparetime_future==""} {
 				switch $sparetime_rest {
 					0.0 {set sparetime_future ""}
-					1.0 {set sparetime_future [lindex {eat slp} [irandom 2]]}
+					1.0 {set sparetime_future [mp_pick sparefuture {eat slp} eat]}
 					2.0 {set sparetime_future [lrange {eat slp eat} [expr {$sparetime_initialize-1}] $sparetime_initialize]}
 					3.0 {set sparetime_future [lrange {"" eat fun slp eat} $sparetime_initialize [expr {$sparetime_initialize+2}]]}
 					4.0 {set sparetime_future {eat fun slp eat}}

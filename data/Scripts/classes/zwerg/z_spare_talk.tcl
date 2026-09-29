@@ -696,7 +696,7 @@ proc sparetime_talk_anim {step sign} {
 	set orsign $sign
 	set at_Mo [get_attrib this atr_Mood]
 	if {$at_Mo<0.4} {set mood ng} elseif {$at_Mo<0.7} {set mood nt} else {set mood po}
-	if {$step<4} {set varia ""} {set varia [string index abc [irandom 3]]}
+	if {$step<4} {set varia ""} {set varia [mp_pick talkvaria {a b c} a]}
 	set sign [string map {"!" e "?" q "." p} $sign]
 	if {$sign=="s"} {set sign ""}
 	if {$sign==""&&$step==4} {set sign "p"}
